@@ -80,6 +80,7 @@ class LoginFragment : Fragment() {
                 builder.show()
             }
 
+            builder.show()
             //viewModel.joinRoom("FuckThisOkHttpThingyEatMyShit")
         }
         return binding.root

@@ -42,7 +42,7 @@ import com.example.spacedimvisuel.screens.login.LoginViewModel
 class LobbyFragment : Fragment() {
 
     private lateinit var viewModel: LobbyViewModel
-    private lateinit var viewModelFactory: LobbyViewModelFactory
+    //private lateinit var viewModelFactory: LobbyViewModelFactory
     private val  listPlayer = {"p1";"p2"}
     private val TAG = "LobbyFragment"
 
@@ -64,9 +64,9 @@ class LobbyFragment : Fragment() {
                 false
         )
 
-        viewModelFactory = LobbyViewModelFactory(LobbyFragmentArgs.fromBundle(arguments!!).user)
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(LobbyViewModel::class.java)
+
+        //viewModelFactory = LobbyViewModelFactory(LobbyFragmentArgs.fromBundle(arguments!!).user)
+
 
         binding.buttonready.setOnClickListener { nextScreen() }
 
@@ -76,10 +76,11 @@ class LobbyFragment : Fragment() {
         binding.playerList.addView(createPlayerContainer("gf",4))
         binding.playerList.addView(createPlayerContainer("f",5))
 
-        //
-        //viewModel = ViewModelProvider(this, viewModelFactory).get(LobbyViewModel::class.java)
+
+        //viewModelFactory = LobbyViewModelFactory(LobbyFragmentArgs.fromBundle(arguments!!).user)
+        viewModel = ViewModelProvider(this).get(LobbyViewModel::class.java)
+
         //println("REPONSE REUSSIE : " + this.viewModel.mainActivityBridge.getLoginVMTraveler())
-       /* println("REPONSE REUSSIE : " + this.viewModel.mainActivityBridge.getLoginVMTraveler())*/
 
         val gameStarterObserver = Observer<SocketListener.EventType> { newState ->
             println("ALELOUIA");
