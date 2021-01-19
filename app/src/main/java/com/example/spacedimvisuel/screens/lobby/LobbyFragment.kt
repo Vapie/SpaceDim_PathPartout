@@ -30,6 +30,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
 import com.example.spacedimvisuel.R
+import com.example.spacedimvisuel.api.SocketListener
 import com.example.spacedimvisuel.databinding.LobbyFragmentBinding
 import com.example.spacedimvisuel.old.LobbyViewModel
 import com.example.spacedimvisuel.old.LobbyViewModelFactory
@@ -40,8 +41,8 @@ import com.example.spacedimvisuel.screens.login.LoginViewModel
  */
 class LobbyFragment : Fragment() {
 
-    //private lateinit var viewModel: LobbyViewModel
-    //private lateinit var viewModelFactory: LobbyViewModelFactory
+    private lateinit var viewModel: LobbyViewModel
+    private lateinit var viewModelFactory: LobbyViewModelFactory
     private val  listPlayer = {"p1";"p2"}
     private val TAG = "LobbyFragment"
 
@@ -51,6 +52,10 @@ class LobbyFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
+
+
+
+       // viewModel.joinRoom("FuckThisOkHttpThingyEatMyShit") not here
         // Inflate view and obtain an instance of the binding class
         binding = DataBindingUtil.inflate(
                 inflater,
@@ -58,11 +63,10 @@ class LobbyFragment : Fragment() {
                 container,
                 false
         )
-        val loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
-        loginViewModel.userFromAPI.observe(viewLifecycleOwner, Observer {
-            Log.i(TAG, loginViewModel.userFromAPI.toString())
-            binding.userText.text = it.name
-        })
+
+        viewModelFactory = LobbyViewModelFactory(LobbyFragmentArgs.fromBundle(arguments!!).user)
+        viewModel = ViewModelProvider(this, viewModelFactory)
+            .get(LobbyViewModel::class.java)
 
         binding.buttonready.setOnClickListener { nextScreen() }
 
@@ -72,16 +76,25 @@ class LobbyFragment : Fragment() {
         binding.playerList.addView(createPlayerContainer("gf",4))
         binding.playerList.addView(createPlayerContainer("f",5))
 
-        //viewModelFactory = LobbyViewModelFactory(LobbyFragmentArgs.fromBundle(arguments!!).user)
+        //
         //viewModel = ViewModelProvider(this, viewModelFactory).get(LobbyViewModel::class.java)
         //println("REPONSE REUSSIE : " + this.viewModel.mainActivityBridge.getLoginVMTraveler())
+       /* println("REPONSE REUSSIE : " + this.viewModel.mainActivityBridge.getLoginVMTraveler())*/
+
+        val gameStarterObserver = Observer<SocketListener.EventType> { newState ->
+            println("ALELOUIA");
+        }
+        viewModel.gameStarter.observe(viewLifecycleOwner, gameStarterObserver)
 
         return binding.root
     }
+
+
     private fun nextScreen() {
         val action = LobbyFragmentDirections.actionLobbyDestinationToGameDestination()
         NavHostFragment.findNavController(this).navigate(action)
     }
+
 
     private fun createPlayerContainer(nom : String ,id :Int) :ConstraintLayout{
         val inflater =LayoutInflater.from(this.context)
@@ -99,4 +112,6 @@ class LobbyFragment : Fragment() {
     private fun toggle(id:Int) {
 
     }
+
+
 }

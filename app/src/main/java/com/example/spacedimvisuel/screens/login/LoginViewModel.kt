@@ -22,13 +22,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spacedimvisuel.api.*
-
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.WebSocket
-
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.launch
+import okhttp3.WebSocket
 
 
 /**
@@ -39,8 +35,8 @@ class LoginViewModel : ViewModel() {
     private val moshi = Moshi.Builder().build()
     private val TAG = "LoginViewModel"
 
-    private val _response = MutableLiveData<String>()
 
+    private val _response = MutableLiveData<String>()
     // The external immutable LiveData for the response String
     val response: LiveData<String>
         get() = _response
@@ -51,7 +47,6 @@ class LoginViewModel : ViewModel() {
 
     val listener = SocketListener()
     var webSocket: WebSocket? = null
-
 
     init {
         Log.i(TAG, "ViewModel Linked")
@@ -99,16 +94,7 @@ class LoginViewModel : ViewModel() {
     }
 
 
-    fun joinRoom(roomName:String){
-        //OKHTTP
-        val client = OkHttpClient()
-        val request = Request.Builder().url("ws://spacedim.async-agency.com:8081/ws/join/" + roomName + "/1").build();
 
-        //WBS
-        webSocket = client.newWebSocket(request, listener)
-
-        webSocket?.send("{\"type\":\"READY\", \"value\":true}");
-    }
 }
 
 

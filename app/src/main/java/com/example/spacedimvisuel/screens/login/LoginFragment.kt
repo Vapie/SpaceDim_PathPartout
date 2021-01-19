@@ -21,15 +21,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import com.example.spacedimvisuel.R
-import com.example.spacedimvisuel.api.User
 import com.example.spacedimvisuel.databinding.LoginFragmentBinding
+
 
 /**
  * Fragment where the game is played
@@ -40,7 +41,6 @@ class LoginFragment : Fragment() {
     private lateinit var binding: LoginFragmentBinding
     private val TAG = "LoginFragment"
     private lateinit var viewModel: LoginViewModel
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -67,13 +67,27 @@ class LoginFragment : Fragment() {
         binding.rocketButton.setOnClickListener {
             viewModel.findUser(binding.editText.getText().toString())
 
+            val builder = AlertDialog.Builder(this.requireContext())
+            val inflater = layoutInflater
+            builder.setTitle("Please enter room name")
+            val dialogLayout = inflater.inflate(R.layout.alert_dialog_edittext, null)
+            val editText = dialogLayout.findViewById<EditText>(R.id.roomNameEditText)
+            builder.setView(dialogLayout)
+            var roomName = ""
+            builder.setPositiveButton("OK") { dialog, which ->
+                roomName = editText.text.toString()
+                println(roomName)
+                builder.show()
+            }
+
             //viewModel.joinRoom("FuckThisOkHttpThingyEatMyShit")
         }
         return binding.root
     }
 
-    private fun goToLobby() {
-
-    }
+    /*private fun goToLobby() {
+        val action = LoginFragmentDirections.actionLoginDestinationToLobbyDestination()
+        NavHostFragment.findNavController(this).navigate(action)
+    }*/
 
 }

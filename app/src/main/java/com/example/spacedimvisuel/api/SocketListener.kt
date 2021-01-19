@@ -2,6 +2,8 @@ package com.example.spacedimvisuel.api
 
 import android.app.Notification
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.spacedimvisuel.api.PolymorphicAdapter.eventGameParser
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
@@ -11,6 +13,9 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 
 class SocketListener: WebSocketListener(){
+
+    //current room
+    public val gameState = MutableLiveData<EventType>()
 
     @JsonClass(generateAdapter = true)
     enum class EventType() {
@@ -39,17 +44,12 @@ class SocketListener: WebSocketListener(){
         val content: String
     }
 
+
     sealed class UIElement(val type: UIType) : IElement {
         data class Button(override var id: Int, override val content: String) : UIElement(UIType.BUTTON)
         data class Switch(override var id: Int, override val content: String) : UIElement(UIType.SWITCH)
         data class Shake(override var id: Int, override val content: String) : UIElement(UIType.SHAKE)
     }
-
-    enum class State(val value: Int) {
-        WAITING(0), READY(1), IN_GAME(2), OVER(3)
-    }
-
-    data class User(val id: Int, val name: String, val avatar: String, var score: Int, var state: State = State.OVER)
 
 
     data class Action(
@@ -71,6 +71,11 @@ class SocketListener: WebSocketListener(){
 
         var message = eventGameParser.fromJson(response);
         println(message?.type)
+
+        if(message?.type == EventType.GAME_OVER){
+            /*gameStarter.value = EventType.GAME_STARTED*/
+            gameState.postValue(message?.type);
+        }
 
     }
 
